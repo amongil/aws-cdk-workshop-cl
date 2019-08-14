@@ -2,14 +2,14 @@ author: Alvaro Mongil
 summary: Deploying cloud infrastructure using the AWS CDK
 status: draft
 id: aws-cdk-workshop
-categories: aws cdk typescript iac
+categories: aws,cdk,typescript,iac
 environments: ts
 feedback link: https://github.com/amongil/aws-cdk-workshop-cl/issues
 
 # Deploying cloud infrastructure using the AWS CDK
 
-## Introduction Step
-Duration: 2
+## Introduction
+Duration: 5
 Hello world!
 
 Positive
@@ -18,11 +18,11 @@ Positive
 Negative
 : The whole world knows me.
 
-## Prerequisites Step
+## Prerequisites
 Duration: 5
 
-## Using available Constructs Step
+## Using available Constructs
 Duration:10
 
-## Authoring Constructs Step
+## Authoring Constructs
 Duration: 15

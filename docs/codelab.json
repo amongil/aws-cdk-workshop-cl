@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-08-14T11:25:11+02:00",
+  "updated": "2019-08-14T11:35:41+02:00",
   "id": "aws-cdk-workshop",
   "duration": 30,
   "title": "Deploying cloud infrastructure using the AWS CDK",
@@ -14,7 +14,10 @@
     "draft"
   ],
   "category": [
-    "aws cdk typescript iac"
+    "aws",
+    "cdk",
+    "typescript",
+    "iac"
   ],
   "tags": [
     "ts"
