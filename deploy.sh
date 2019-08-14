@@ -5,6 +5,8 @@ echo -e "\033[0;32mDeploying updates to GitHub...\033[0m"
 # Build the project.
 claat export workshop.md # if using a theme, replace by `hugo -t <yourtheme>`
 
+cp ./aws-cdk-workshop/ ./docs/
+
 # Add changes to git.
 git add -A
 
