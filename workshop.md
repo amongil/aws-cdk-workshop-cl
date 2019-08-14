@@ -4,11 +4,11 @@ status: draft
 id: aws-cdk-workshop
 categories: aws cdk typescript iac
 environments: ts
-feedback link: https://github.com/amongil/aws-cdk-workshop-cl
+feedback link: https://github.com/amongil/aws-cdk-workshop-cl/issues
 
 # Deploying cloud infrastructure using the AWS CDK
 
-## Introduction
+## Introduction Step
 Duration: 2
 Hello world!
 
@@ -18,11 +18,11 @@ Positive
 Negative
 : The whole world knows me.
 
-## Prerequisites
+## Prerequisites Step
 Duration: 5
 
-## Using available Constructs
+## Using available Constructs Step
 Duration:10
 
-## Authoring Constructs
+## Authoring Constructs Step
 Duration: 15

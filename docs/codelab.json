@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-08-14T10:46:16+02:00",
+  "updated": "2019-08-14T11:25:11+02:00",
   "id": "aws-cdk-workshop",
   "duration": 30,
   "title": "Deploying cloud infrastructure using the AWS CDK",
@@ -19,6 +19,6 @@
   "tags": [
     "ts"
   ],
-  "feedback": "https://github.com/amongil/aws-cdk-workshop-cl",
+  "feedback": "https://github.com/amongil/aws-cdk-workshop-cl/issues",
   "url": "aws-cdk-workshop"
 }
