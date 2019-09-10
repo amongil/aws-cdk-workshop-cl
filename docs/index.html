@@ -27,26 +27,43 @@
                   environment="web"
                   feedback-link="https://github.com/amongil/aws-cdk-workshop-cl/issues">
     
-      <google-codelab-step label="Introduction" duration="0">
-        <aside class="special"><p>I have said &#34;Hello&#34; to the whole world.</p>
+      <google-codelab-step label="Introduction" duration="5">
+        <p>When defining Infrastructure as Code (IaC) in AWS, writing YAML CloudFormation templates is probably the most common choice among Enterprises. Main reason being that CloudFormation is a first-class service in the AWS ecosystem. It is completely integrated with all the other services in the platform and keeps getting updates and improvements over time.</p>
+<p>But YAML is not a programming language and the usual method of collaboration and sharing of templates is copy-pasting existing templates and adapting those to fit your current needs. This makes the process of describing the infrastructure for a new project or even updating an existing one tedious and very prone to human error. There has not existed an official tool for describing and deploying CloudFormation stacks and AWS resources programmatically, and the community has turned to third-party tools like <a href="https://github.com/cloudtools/troposphere" target="_blank">troposphere</a> in order to get benefits from a high level language like Python, but it does come with its own issues, like being behind on CloudFormation-supported services, updates, and some inconsistency in parameter naming.</p>
+<p>That was the situation until now, that AWS releases its <a href="https://aws.amazon.com/cdk/" target="_blank">CDK</a>, or Cloud Development Kit.</p>
+<p>AWS CDK gives you the expressive power of programming languages for defining infrastructure. Familiar features such as objects, loops, and conditions accelerate your development process. You can also use AWS CDK with your integrated development environment (IDE) to take advantage of existing productivity tools and testing frameworks.</p>
+<p>As of August 2019, languages supported are TypeScript, Python, Java (developer preview), and .NET (developer preview).</p>
+<aside class="special"><p>This workshop will be based off the TypeScript libraries.</p>
 </aside>
-<aside class="warning"><p>The whole world knows me.</p>
-</aside>
+<p>This workshop aims to showcase some of the features that makes the CDK unique (such as <em>constructs</em> and <em>aspects</em>) and to prove how they can solve some common challenges, such as corporate compliance, collaboration in development, reusability of templates, testing, and automated CI/CD processes.</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Prerequisites" duration="5">
+        <ul>
+<li><a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html" target="_blank">AWS CLI</a></li>
+<li>AWS Account and User with appropiate rights</li>
+<li><a href="https://nodejs.org" target="_blank">Node.js (&gt;= 8.12.0)</a></li>
+<li><a href="https://github.com/aws/aws-cdk" target="_blank">AWS CDK Toolkit</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="CDK concepts" duration="10">
+        <h2 is-upgraded>Constructs</h2>
+<h2 is-upgraded>Aspects</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Importing and using an existing Construct" duration="15">
         
 
       </google-codelab-step>
     
-      <google-codelab-step label="Using available Constructs" duration="10">
-        
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Authoring Constructs" duration="15">
+      <google-codelab-step label="Creating our first Construct" duration="0">
         
 
       </google-codelab-step>
