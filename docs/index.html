@@ -142,8 +142,25 @@ export class ProductionPostgresql extends cdk.Construct {
 </code></pre>
 <aside class="special"><p>Don&#39;t forget to install and save the dependency for aws-rds with <code>shell npm install --save @aws-cdk/aws-rds</code></p>
 </aside>
-<p>So let&#39;s go ahead and build first the RDS resource for the PostgreSQL instance and then implement the mentioned Aspects on a later stage.</p>
-<h2 is-upgraded>Implementing Aspects for compliance</h2>
+<p>So let&#39;s go ahead and build first the RDS resource for the PostgreSQL instance and then implement the mentioned Aspects on a later stage. We will make use of the <a href="https://docs.aws.amazon.com/cdk/api/latest/docs/aws-rds-readme.html" target="_blank">reference documentation</a> and, since we are going to be creating raw low-level CloudFormation resources, the <a href="https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/aws-properties-rds-database-instance.html" target="_blank">CloudFormation reference</a> too.</p>
+<pre><code>import cdk = require(&#39;@aws-cdk/core&#39;);
+import rds = require(&#39;@aws-cdk/aws-rds&#39;);
+
+
+export interface ProductionPostgresqlProps {}
+
+export class ProductionPostgresql extends cdk.Construct {
+  public readonly productionPostgresql: rds.CfnDBInstance;
+
+  constructor(scope: cdk.Construct, id: string, props: ProductionPostgresqlProps) {
+    super(scope, id);
+
+    this.productionPostgresql = new rds.CfnDBInstance(this, &#39;productionPostgresql&#39;, props);
+  }
+}
+</code></pre>
+<p>This is going to be our constructor to create a low-level CloudFormation general-purpose RDS Instance. Next, we will apply a database engine to the Construct and some compliance constraints too.</p>
+<h2 is-upgraded>Implementing Aspects</h2>
 <h2 is-upgraded>Consuming our Construct class</h2>
 <h2 is-upgraded>Writing tests for our CDK Application</h2>
 
