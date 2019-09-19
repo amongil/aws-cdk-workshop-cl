@@ -161,6 +161,59 @@ export class ProductionPostgresql extends cdk.Construct {
 </code></pre>
 <p>This is going to be our constructor to create a low-level CloudFormation general-purpose RDS Instance. Next, we will apply a database engine to the Construct and some compliance constraints too.</p>
 <h2 is-upgraded>Implementing Aspects</h2>
+<p>In this section we are going to implement a total of 4 Aspects with the following goals:</p>
+<ol type="1">
+<li>Select the DB engine and pin it to a specific version</li>
+<li>Enforce MultiAZ compliance rule</li>
+<li>Check encryption compliance rule</li>
+<li>Check tagging compliance rule</li>
+</ol>
+<h3 is-upgraded>Select the DB engine and pin it to a specific version</h3>
+<pre><code>class RdsPostgresqlEngine implements cdk.IAspect {
+    public visit(node: cdk.IConstruct): void {
+      if (node instanceof rds.CfnDBInstance) {
+        node.engine = &#39;postgres&#39;;
+        node.engineVersion = &#39;11.4&#39;
+      }
+    }
+}
+</code></pre>
+<h3 is-upgraded>Check MultiAZ compliance rule</h3>
+<pre><code>class RdsMultiAzEnabled implements cdk.IAspect {
+    public visit(node: cdk.IConstruct): void {
+      if (node instanceof rds.CfnDBInstance) {
+        node.multiAz = true
+      }
+    }
+}
+</code></pre>
+<h3 is-upgraded>Check encryption compliance rule</h3>
+<pre><code>class RdsEncryptionChecker implements cdk.IAspect {
+  public visit(node: cdk.IConstruct): void {
+    if (node instanceof rds.CfnDBInstance) {
+      if (!node.storageEncrypted) {
+        node.node.addError(&#39;Database storage encryption must be enabled&#39;);
+      }
+    }
+  }
+}
+</code></pre>
+<h3 is-upgraded>Check tagging compliance rule</h3>
+<pre><code>class RdsTagsChecker implements cdk.IAspect {
+  public visit(node: cdk.IConstruct): void {
+    if (node instanceof rds.CfnDBInstance) {
+      var tags: string[] = [];
+      for (let tagObject of node.tags.renderTags()) {
+        tags.push(tagObject[&#39;key&#39;])
+      }
+    
+      if (!(tags.includes(&#39;Department&#39;))) {
+          node.node.addError(&#39;You must specify the \&#39;Department\&#39; tag for your DynamoDB CfnTable construct&#39;);
+      }
+    }
+  }
+}
+</code></pre>
 <h2 is-upgraded>Consuming our Construct class</h2>
 <h2 is-upgraded>Writing tests for our CDK Application</h2>
 

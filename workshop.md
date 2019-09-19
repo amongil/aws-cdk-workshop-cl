@@ -198,7 +198,66 @@ export class ProductionPostgresql extends cdk.Construct {
 This is going to be our constructor to create a low-level CloudFormation general-purpose RDS Instance. Next, we will apply a database engine to the Construct and some compliance constraints too.
 
 ### Implementing Aspects
+In this section we are going to implement a total of 4 Aspects with the following goals:
 
+1. Select the DB engine and pin it to a specific version
+2. Enforce MultiAZ compliance rule
+3. Check encryption compliance rule
+4. Check tagging compliance rule
+
+#### Select the DB engine and pin it to a specific version
+```typescript
+class RdsPostgresqlEngine implements cdk.IAspect {
+    public visit(node: cdk.IConstruct): void {
+      if (node instanceof rds.CfnDBInstance) {
+        node.engine = 'postgres';
+        node.engineVersion = '11.4'
+      }
+    }
+}
+```
+
+#### Check MultiAZ compliance rule
+```typescript
+class RdsMultiAzEnabled implements cdk.IAspect {
+    public visit(node: cdk.IConstruct): void {
+      if (node instanceof rds.CfnDBInstance) {
+        node.multiAz = true
+      }
+    }
+}
+```
+
+#### Check encryption compliance rule
+```typescript
+class RdsEncryptionChecker implements cdk.IAspect {
+  public visit(node: cdk.IConstruct): void {
+    if (node instanceof rds.CfnDBInstance) {
+      if (!node.storageEncrypted) {
+        node.node.addError('Database storage encryption must be enabled');
+      }
+    }
+  }
+}
+```
+
+#### Check tagging compliance rule
+```typescript
+class RdsTagsChecker implements cdk.IAspect {
+  public visit(node: cdk.IConstruct): void {
+    if (node instanceof rds.CfnDBInstance) {
+      var tags: string[] = [];
+      for (let tagObject of node.tags.renderTags()) {
+        tags.push(tagObject['key'])
+      }
+    
+      if (!(tags.includes('Department'))) {
+          node.node.addError('You must specify the \'Department\' tag for your DynamoDB CfnTable construct');
+      }
+    }
+  }
+}
+```
 
 ### Consuming our Construct class
 ### Writing tests for our CDK Application
