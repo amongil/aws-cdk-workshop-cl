@@ -259,6 +259,17 @@ class RdsTagsChecker implements cdk.IAspect {
 }
 ```
 
+Next we're going to **apply** the Aspects to our Construct like this:
+
+```typescript
+  //...(constructor function)
+    this.productionPostgresql = new rds.CfnDBInstance(this, 'productionPostgresql', props);
+    this.node.applyAspect(new RdsMultiAzEnabled())
+    this.node.applyAspect(new RdsPostgresqlEngine())
+    this.node.applyAspect(new RdsEncryptionChecker())
+    this.node.applyAspect(new RdsTagsChecker())
+```
+
 ### Consuming our Construct class
 ### Writing tests for our CDK Application
 

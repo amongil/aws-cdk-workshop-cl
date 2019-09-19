@@ -214,6 +214,14 @@ export class ProductionPostgresql extends cdk.Construct {
   }
 }
 </code></pre>
+<p>Next we&#39;re going to <strong>apply</strong> the Aspects to our Construct like this:</p>
+<pre><code>  //...(constructor function)
+    this.productionPostgresql = new rds.CfnDBInstance(this, &#39;productionPostgresql&#39;, props);
+    this.node.applyAspect(new RdsMultiAzEnabled())
+    this.node.applyAspect(new RdsPostgresqlEngine())
+    this.node.applyAspect(new RdsEncryptionChecker())
+    this.node.applyAspect(new RdsTagsChecker())
+</code></pre>
 <h2 is-upgraded>Consuming our Construct class</h2>
 <h2 is-upgraded>Writing tests for our CDK Application</h2>
 
