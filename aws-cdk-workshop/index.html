@@ -222,7 +222,33 @@ export class ProductionPostgresql extends cdk.Construct {
     this.node.applyAspect(new RdsEncryptionChecker())
     this.node.applyAspect(new RdsTagsChecker())
 </code></pre>
+<p>Our library is ready to be consumed by the client application.</p>
 <h2 is-upgraded>Consuming our Construct class</h2>
+<p>NPM allows us to directly install an NPM library from a GitHub repository.</p>
+<p>Create a new repo for our client application and install the Construct library as a dependency.</p>
+<pre><code>mkdir cdk-workshop-client-app &amp;&amp; cd cdk-workshop-client-app
+cdk init --language typescript
+npm install amongil/cdk-workshop-golden-constructs
+</code></pre>
+<p>We can now in our client app source file import it like this at the top of the file:</p>
+<pre><code>import rds = require(&#39;cdk-poc-corporate-constructs/lib/rds&#39;);
+</code></pre>
+<p>We could create a resource like this:</p>
+<pre><code>new rds.ProductionPostgresql(this, &#39;MyProductionPostgresql&#39;, {
+    dbInstanceClass: &#39;db.t2.medium&#39;,
+    allocatedStorage: &#39;10&#39;,
+    masterUsername: &#39;myUser&#39;,
+    masterUserPassword: &#39;myPassword&#39;,
+    dbName: &#39;cdkpocpostgres&#39;,
+    storageEncrypted: true,
+    tags: [
+        {
+            key: &#39;Department&#39;,
+            value: &#39;AI Factory&#39;,
+        },
+    ],
+});
+</code></pre>
 <h2 is-upgraded>Writing tests for our CDK Application</h2>
 
 

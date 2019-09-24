@@ -270,7 +270,45 @@ Next we're going to **apply** the Aspects to our Construct like this:
     this.node.applyAspect(new RdsTagsChecker())
 ```
 
+Our library is ready to be consumed by the client application.
+
 ### Consuming our Construct class
+
+NPM allows us to directly install an NPM library from a GitHub repository.
+
+Create a new repo for our client application and install the Construct library as a dependency.
+
+```shell
+mkdir cdk-workshop-client-app && cd cdk-workshop-client-app
+cdk init --language typescript
+npm install amongil/cdk-workshop-golden-constructs
+```
+
+We can now in our client app source file import it like this at the top of the file:
+
+```typescript
+import rds = require('cdk-poc-corporate-constructs/lib/rds');
+```
+
+We could create a resource like this:
+
+```typescript
+new rds.ProductionPostgresql(this, 'MyProductionPostgresql', {
+    dbInstanceClass: 'db.t2.medium',
+    allocatedStorage: '10',
+    masterUsername: 'myUser',
+    masterUserPassword: 'myPassword',
+    dbName: 'cdkpocpostgres',
+    storageEncrypted: true,
+    tags: [
+        {
+            key: 'Department',
+            value: 'AI Factory',
+        },
+    ],
+});
+```
+
 ### Writing tests for our CDK Application
 
 Duration: 5
