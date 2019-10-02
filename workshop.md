@@ -315,3 +315,115 @@ Duration: 5
 
 ## CDK Applications CI/CD with CodePipeline
 Duration: 5
+
+## Live coding
+### Producer
+Create dir and init:
+```shell
+mkdir cdk-workshop-golden-constructs && cd cdk-workshop-golden-constructs
+cdk init lib --language=typescript
+```
+
+Contents of index.ts:
+```typescript
+export * from './dynamodb';
+```
+
+Contents of dynamodb.ts:
+```typescript
+import cdk = require('@aws-cdk/core');
+import dynamoDb = require('@aws-cdk/aws-dynamodb');
+
+
+export interface DynamoTableProps {
+    readonly keySchema: any; // mandatory fields
+    readonly [others: string]: any; // need to allow for other non-mandatory fields without directly specifying them all
+}
+
+export class DynamoTable extends cdk.Construct {
+  public readonly cfnDynamoTable: dynamoDb.CfnTable;
+
+  constructor(scope: cdk.Construct, id: string, props: DynamoTableProps) {
+    super(scope, id);
+
+    // Your code goes here
+    // Instantiate a dynamodb cfn table and apply one aspect to it
+
+  }
+}
+
+class DynamoEncryptionChecker implements cdk.IAspect {
+  public visit(node: cdk.IConstruct): void {
+    if (node instanceof dynamoDb.CfnTable) {
+      // If encryption not enabled, throw error
+    }
+  }
+}
+```
+### Consumer
+Create dir and init:
+```shell
+mkdir cdk-workshop-my-consumer-app && cd cdk-workshop-my-consumer-app
+cdk init --language=typescript
+```
+
+Stack file would look like:
+```typescript
+import cdk = require('@aws-cdk/core');
+import dynamoDb = require('cdk-poc-corporate-constructs/lib/dynamodb');
+
+export class CdkPocMyConsumerAppStack extends cdk.Stack {
+    public constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+        super(scope, id, props);
+        // Your code goes here
+        // Create DynamoDB table
+    }
+}
+```
+
+Once done and "cdk synth" runs successfully, create a tests folder:
+```shell
+mkdir __tests__ && cd __tests__
+touch dynamodb.test.ts
+```
+
+Contents of test file:
+
+```typescript
+import cdk = require('@aws-cdk/core');
+import dynamoDb = require('cdk-poc-corporate-constructs/lib/dynamodb');
+import { countResources, expect, haveResource, ResourcePart } from '@aws-cdk/assert';
+
+
+test('test name is correctly set for a dynamodb table', () => {
+  const stack = new cdk.Stack();
+
+  // Your code goes here
+  // Instantiate a DynamoDB Table construct in the stack context
+
+
+  // Write test: expect the stack to have a resource with the property of encryption to true
+  // https://www.npmjs.com/package/@aws-cdk/assert
+});
+```
+
+Run tests:
+
+```shell
+npm run-script build
+npm test
+```
+
+Contents of my package json scripts:
+
+```json
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "test": "jest",
+    "lint": "eslint 'lib/**/*.ts{,x}'"
+  },
+```
+
+Duration: 30

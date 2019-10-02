@@ -259,6 +259,100 @@ npm install amongil/cdk-workshop-golden-constructs
 
       </google-codelab-step>
     
+      <google-codelab-step label="Live coding" duration="30">
+        <h2 is-upgraded>Producer</h2>
+<p>Create dir and init:</p>
+<pre><code>mkdir cdk-workshop-golden-constructs &amp;&amp; cd cdk-workshop-golden-constructs
+cdk init lib --language=typescript
+</code></pre>
+<p>Contents of index.ts:</p>
+<pre><code>export * from &#39;./dynamodb&#39;;
+</code></pre>
+<p>Contents of dynamodb.ts:</p>
+<pre><code>import cdk = require(&#39;@aws-cdk/core&#39;);
+import dynamoDb = require(&#39;@aws-cdk/aws-dynamodb&#39;);
+
+
+export interface DynamoTableProps {
+    readonly keySchema: any; // mandatory fields
+    readonly [others: string]: any; // need to allow for other non-mandatory fields without directly specifying them all
+}
+
+export class DynamoTable extends cdk.Construct {
+  public readonly cfnDynamoTable: dynamoDb.CfnTable;
+
+  constructor(scope: cdk.Construct, id: string, props: DynamoTableProps) {
+    super(scope, id);
+
+    // Your code goes here
+    // Instantiate a dynamodb cfn table and apply one aspect to it
+
+  }
+}
+
+class DynamoEncryptionChecker implements cdk.IAspect {
+  public visit(node: cdk.IConstruct): void {
+    if (node instanceof dynamoDb.CfnTable) {
+      // If encryption not enabled, throw error
+    }
+  }
+}
+</code></pre>
+<h2 is-upgraded>Consumer</h2>
+<p>Create dir and init:</p>
+<pre><code>mkdir cdk-workshop-my-consumer-app &amp;&amp; cd cdk-workshop-my-consumer-app
+cdk init --language=typescript
+</code></pre>
+<p>Stack file would look like:</p>
+<pre><code>import cdk = require(&#39;@aws-cdk/core&#39;);
+import dynamoDb = require(&#39;cdk-poc-corporate-constructs/lib/dynamodb&#39;);
+
+export class CdkPocMyConsumerAppStack extends cdk.Stack {
+    public constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+        super(scope, id, props);
+        // Your code goes here
+        // Create DynamoDB table
+    }
+}
+</code></pre>
+<p>Once done and &#34;cdk synth&#34; runs successfully, create a tests folder:</p>
+<pre><code>mkdir __tests__ &amp;&amp; cd __tests__
+touch dynamodb.test.ts
+</code></pre>
+<p>Contents of test file:</p>
+<pre><code>import cdk = require(&#39;@aws-cdk/core&#39;);
+import dynamoDb = require(&#39;cdk-poc-corporate-constructs/lib/dynamodb&#39;);
+import { countResources, expect, haveResource, ResourcePart } from &#39;@aws-cdk/assert&#39;;
+
+
+test(&#39;test name is correctly set for a dynamodb table&#39;, () =&gt; {
+  const stack = new cdk.Stack();
+
+  // Your code goes here
+  // Instantiate a DynamoDB Table construct in the stack context
+
+
+  // Write test: expect the stack to have a resource with the property of encryption to true
+  // https://www.npmjs.com/package/@aws-cdk/assert
+});
+</code></pre>
+<p>Run tests:</p>
+<pre><code>npm run-script build
+npm test
+</code></pre>
+<p>Contents of my package json scripts:</p>
+<pre><code>  &#34;scripts&#34;: {
+    &#34;build&#34;: &#34;tsc&#34;,
+    &#34;watch&#34;: &#34;tsc -w&#34;,
+    &#34;cdk&#34;: &#34;cdk&#34;,
+    &#34;test&#34;: &#34;jest&#34;,
+    &#34;lint&#34;: &#34;eslint &#39;lib/**/*.ts{,x}&#39;&#34;
+  },
+</code></pre>
+
+
+      </google-codelab-step>
+    
   </google-codelab>
 
   <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
