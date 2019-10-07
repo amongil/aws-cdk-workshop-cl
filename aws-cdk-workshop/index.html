@@ -250,16 +250,143 @@ npm install amongil/cdk-workshop-golden-constructs
 });
 </code></pre>
 <h2 is-upgraded>Writing tests for our CDK Application</h2>
+<p>The AWS CDK gives us an <a href="https://docs.aws.amazon.com/cdk/api/latest/typescript/api/assert.html" target="_blank">asserts library</a> to simplify the creation of our unit tests. Here we are going to use Jest for the framework and this library to create the assertions. The process is the following: we create an app, define an stack and add resources to it, then we assert certain properties against this collection of resources.</p>
+<p>So let&#39;s continue with our compliance-met production PostgreSQL instance example from before and write a test to check the engine version:</p>
+<pre><code>test(&#39;test engine version is 11.4 for a production postgresql instance&#39;, () =&gt; {
+  const stack = new cdk.Stack();
+
+  const postgres = new rds.ProductionPostgresql(stack, &#39;MyProdPostgres&#39;, {
+    dbInstanceClass: &#39;db.t2.micro&#39;
+  });
+  
+  expect(stack).to(haveResource(&#39;AWS::RDS::DBInstance&#39;, {
+    EngineVersion: &#39;11.4&#39;
+  }))
+});
+</code></pre>
+<aside class="special"><p>Writing unit tests in our client application that consume other libraries is important if we are going to use the <em>latest</em> version they publish. This way, we can always benefit from the latest bug fixes and features, while being sure that the core engines and properties that we are really dependant on stay the same.</p>
+</aside>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="CDK Applications CI/CD with CodePipeline" duration="5">
-        
+      <google-codelab-step label="CDK Applications CI/CD with CircleCI" duration="5">
+        <p>Now that our infrastructure is defined as code and as a TypeScript application, we can put it on the same lifecycle as any other software application. This means, CI/CD capabilities with linting, testing, building phase and deploy phase (with the help of the CDK CLI tool).</p>
+<p>To achieve this, I have used CircleCI as it is really easy to hook with public GitHub repos. The workflow can be defined as follows:</p>
+<pre><code>version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: &#39;sudo npm install -g npm@latest&#39;
+      - restore_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+          paths:
+            - ./node_modules
+      - run:
+          name: build
+          command: npm run build
+  lint:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: &#39;sudo npm install -g npm@latest&#39;
+      - restore_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+          paths:
+            - ./node_modules
+      - run:
+          name: lint
+          command: npm run lint
+  test:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: &#39;sudo npm install -g npm@latest&#39;
+      - restore_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+          paths:
+            - ./node_modules
+      - run:
+          name: test
+          command: npm run test
+  deploy:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: &#39;sudo npm install -g npm@latest&#39;
+      - restore_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-&#123;&#123; checksum &#34;package.json&#34; }}
+          paths:
+            - ./node_modules
+      - run:
+          name: deploy
+          command: npm run cdk deploy
+          no_output_timeout: &#34;30m&#34;
+
+workflows:
+  version: 2
+  lint_build_test_deploy:
+    jobs:
+      - lint
+      - build
+      - test
+      - deploy:
+          requires:
+            - lint
+            - build
+            - test
+          filters:
+            branches:
+              only: master
+</code></pre>
+<p>That workflow would look like this:</p>
+<p class="image-container"><img alt="CircleCI workflow" src="img/d360d6716a8313e6.png"></p>
+
 
       </google-codelab-step>
     
-      <google-codelab-step label="Live coding" duration="30">
+      <google-codelab-step label="Conclusions" duration="0">
+        <p>I truly find the AWS CDK a step up in the Infrastructure as Code paradigm. Writing real software applications, with unit tests and standard CI/CD practices is only going to make our infraestructure more robust and will engage the developers more when it comes to adhere to standards. With the asserts library, we can see the CDK comes with these ideas from start.</p>
+<p>As an infrastructure developer, I hope we can move away from DSLs, .yaml files and use the AWS CDK as the base for infrastructure development within the AWS ecosystem and can&#39;t wait to see what the community will do with the CDK, finding new ways and bringing innovation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Live coding for sessions" duration="30">
         <h2 is-upgraded>Producer</h2>
 <p>Create dir and init:</p>
 <pre><code>mkdir cdk-workshop-golden-constructs &amp;&amp; cd cdk-workshop-golden-constructs

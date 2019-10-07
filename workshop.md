@@ -311,12 +311,150 @@ new rds.ProductionPostgresql(this, 'MyProductionPostgresql', {
 
 ### Writing tests for our CDK Application
 
+The AWS CDK gives us an [asserts library](https://docs.aws.amazon.com/cdk/api/latest/typescript/api/assert.html) to simplify the creation of our unit tests. Here we are going to use Jest for the framework and this library to create the assertions. The process is the following: we create an app, define an stack and add resources to it, then we assert certain properties against this collection of resources.
+
+So let's continue with our compliance-met production PostgreSQL instance example from before and write a test to check the engine version:
+
+```typescript
+test('test engine version is 11.4 for a production postgresql instance', () => {
+  const stack = new cdk.Stack();
+
+  const postgres = new rds.ProductionPostgresql(stack, 'MyProdPostgres', {
+    dbInstanceClass: 'db.t2.micro'
+  });
+  
+  expect(stack).to(haveResource('AWS::RDS::DBInstance', {
+    EngineVersion: '11.4'
+  }))
+});
+```
+
+Positive
+: Writing unit tests in our client application that consume other libraries is important if we are going to use the *latest* version they publish. This way, we can always benefit from the latest bug fixes and features, while being sure that the core engines and properties that we are really dependant on stay the same.
+
+
 Duration: 5
 
-## CDK Applications CI/CD with CodePipeline
+## CDK Applications CI/CD with CircleCI
+
+Now that our infrastructure is defined as code and as a TypeScript application, we can put it on the same lifecycle as any other software application. This means, CI/CD capabilities with linting, testing, building phase and deploy phase (with the help of the CDK CLI tool).
+
+To achieve this, I have used CircleCI as it is really easy to hook with public GitHub repos. The workflow can be defined as follows:
+
+```yaml
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: build
+          command: npm run build
+  lint:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: lint
+          command: npm run lint
+  test:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: test
+          command: npm run test
+  deploy:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: deploy
+          command: npm run cdk deploy
+          no_output_timeout: "30m"
+
+workflows:
+  version: 2
+  lint_build_test_deploy:
+    jobs:
+      - lint
+      - build
+      - test
+      - deploy:
+          requires:
+            - lint
+            - build
+            - test
+          filters:
+            branches:
+              only: master
+```
+
+That workflow would look like this:
+
+![CircleCI workflow](docs/img/cicd_cdkpoc.png)
+
 Duration: 5
 
-## Live coding
+## Conclusions
+I truly find the AWS CDK a step up in the Infrastructure as Code paradigm. Writing real software applications, with unit tests and standard CI/CD practices is only going to make our infraestructure more robust and will engage the developers more when it comes to adhere to standards. With the asserts library, we can see the CDK comes with these ideas from start.
+
+As an infrastructure developer, I hope we can move away from DSLs, .yaml files and use the AWS CDK as the base for infrastructure development within the AWS ecosystem and can't wait to see what the community will do with the CDK, finding new ways and bringing innovation.
+
+## Live coding for sessions
 ### Producer
 Create dir and init:
 ```shell

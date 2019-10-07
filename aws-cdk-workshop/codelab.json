@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-02T16:42:40+02:00",
+  "updated": "2019-10-07T10:25:51+02:00",
   "id": "aws-cdk-workshop",
   "duration": 70,
   "title": "Deploying cloud infrastructure using the AWS CDK",
